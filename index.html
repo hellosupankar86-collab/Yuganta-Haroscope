@@ -1,0 +1,1804 @@
+```html
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#7c1616">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="যুগান্ত শাস্ত্রী">
+    <title>যুগান্ত শাস্ত্রী — ইস্ট ইন্ডিয়ান জ্যোতিষ চার্ট ও প্রেসক্রিপশন জেনারেটর</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #e7e2d8;
+        }
+        .font-serif-bn {
+            font-family: 'Noto Serif Bengali', serif;
+        }
+
+        /* A4 Page Styling */
+        .a4-sheet {
+            width: 210mm;
+            min-height: 297mm;
+            background: #fffdf9;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+            margin: 0 auto 24px auto;
+            padding: 7.5mm 9.5mm;
+            box-sizing: border-box;
+            color: #1e293b;
+        }
+
+        .a4-border-frame {
+            border: 2px solid #7f1d1d;
+            outline: 1px solid #b45309;
+            outline-offset: -4px;
+            min-height: calc(297mm - 15mm);
+            padding: 10px 13px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: #fffdf9;
+        }
+
+        /* Auto-expanding textareas on the A4 sheet */
+        .sheet-auto-textarea {
+            width: 100%;
+            resize: none;
+            overflow: hidden;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: inherit;
+            display: block;
+        }
+        .sheet-auto-textarea:focus {
+            background: rgba(254, 243, 199, 0.35);
+            border-radius: 4px;
+        }
+
+        /* Subtle visual cue for inline editable text */
+        [contenteditable="true"]:hover {
+            background-color: rgba(254, 243, 199, 0.45);
+            border-radius: 3px;
+        }
+        [contenteditable="true"]:focus {
+            outline: 1px dashed #b45309;
+            background-color: rgba(254, 249, 195, 0.65);
+            border-radius: 3px;
+        }
+
+        /* Clean Print & Save as PDF Rules */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+            body {
+                background: #ffffff !important;
+                margin: 0;
+                padding: 0;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-wrapper {
+                padding: 0 !important;
+                margin: 0 !important;
+                background: transparent !important;
+                width: 100% !important;
+            }
+            .a4-sheet {
+                width: 210mm !important;
+                min-height: 297mm !important;
+                height: auto !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 7mm 9mm !important;
+                page-break-after: always;
+                break-after: page;
+            }
+            .a4-sheet:last-child {
+                page-break-after: auto;
+                break-after: auto;
+            }
+            .a4-border-frame {
+                min-height: calc(297mm - 14mm) !important;
+            }
+            [contenteditable="true"]:hover,
+            [contenteditable="true"]:focus {
+                background: transparent !important;
+                outline: none !important;
+            }
+            .sheet-auto-textarea:focus {
+                background: transparent !important;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        /* Cover / Splash Screen Overlay */
+        #cover_splash {
+            background: radial-gradient(circle at top, #8c1919 0%, #560d0d 65%, #370707 100%);
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .cover-card-anim {
+            animation: fadeInScale 0.35s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <!-- LAUNCH COVER / SPLASH SCREEN -->
+    <div id="cover_splash" class="no-print fixed inset-0 z-50 flex items-center justify-center p-4 text-amber-50 overflow-y-auto">
+        <div class="cover-card-anim w-full max-w-md bg-[#fffdf9] text-slate-900 rounded-2xl border-2 border-amber-400 shadow-2xl p-6 text-center space-y-4">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/10 border border-red-900/20 text-red-900 text-xs font-bold">
+                <span>✦</span>
+                <span>বৈদিক ও ইস্ট ইন্ডিয়ান জ্যোতিষ অ্যাপ</span>
+            </div>
+
+            <!-- Uploadable Cover Photo Slot -->
+            <div class="flex flex-col items-center gap-2">
+                <div class="relative w-28 h-28 rounded-full border-4 border-amber-500 shadow-lg overflow-hidden bg-amber-50 flex items-center justify-center">
+                    <img id="cover_photo_img" src="" alt="যুগান্ত শাস্ত্রী ছবি" class="w-full h-full object-cover hidden">
+                    <div id="cover_photo_placeholder" class="flex flex-col items-center justify-center text-red-900/70 px-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span class="text-[10px] font-bold leading-tight">ছবি যুক্ত করুন</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label for="in_cover_photo" class="px-3 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-red-950 text-xs font-bold cursor-pointer border border-amber-300 transition">
+                        ছবি নির্বাচন করুন
+                    </label>
+                    <input type="file" id="in_cover_photo" accept="image/*" onchange="handleCoverPhotoUpload(event)" class="hidden">
+                    <button type="button" onclick="removeCoverPhoto()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer border border-slate-300 transition">
+                        ছবি মুছুন
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cover Title & Editable Role -->
+            <div class="space-y-1">
+                <h2 id="cover_title_display" class="font-serif-bn text-2xl sm:text-3xl font-bold text-[#6e1212]">
+                    যুগান্ত শাস্ত্রী
+                </h2>
+                <input type="text" id="in_cover_role" oninput="syncCoverRole()"
+                    value="জ্যোতিষ ভারতী, হস্তরেখা ও বাস্তুশাস্ত্রবিদ"
+                    placeholder="পদবি বা পরিচিতি লিখুন..."
+                    class="w-full text-center text-xs sm:text-sm font-semibold text-slate-700 bg-amber-50/70 border border-amber-200 rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-red-800">
+            </div>
+
+            <!-- Status / Notice Message Box -->
+            <div id="app_notice_box" class="hidden text-xs font-medium px-3 py-2 rounded-lg border bg-amber-50 border-amber-300 text-red-950"></div>
+
+            <!-- Primary Actions -->
+            <div class="pt-1 flex flex-col sm:flex-row gap-2.5">
+                <button type="button" onclick="dismissCoverScreen(true)"
+                    class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#7c1616] to-[#5a1010] hover:from-[#8d1b1b] hover:to-[#691313] text-amber-100 font-bold text-sm shadow-md cursor-pointer transition">
+                    অ্যাপে প্রবেশ করুন →
+                </button>
+                <button type="button" id="btn_install_pwa" onclick="triggerInstallPrompt()"
+                    class="py-2.5 px-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-red-950 font-bold text-xs sm:text-sm shadow cursor-pointer transition">
+                    অ্যাপ ইনস্টল করুন
+                </button>
+            </div>
+            <p class="text-[11px] text-slate-500">
+                কয়েক সেকেন্ড পর স্বয়ংক্রিয়ভাবে মূল অ্যাপ খুলবে অথবা যেকোনো সময় ওপরে ক্লিক করে প্রবেশ করতে পারেন।
+            </p>
+        </div>
+    </div>
+
+    <!-- TOP ACTION BAR (Hidden on Print) -->
+    <header class="no-print bg-gradient-to-r from-[#5a1010] via-[#7c1616] to-[#5a1010] text-amber-50 shadow-md sticky top-0 z-40">
+        <div class="max-w-[1760px] mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-2.5">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-amber-400/20 border border-amber-300/50 flex items-center justify-center text-amber-300 font-bold text-base">
+                    ✦
+                </div>
+                <div>
+                    <h1 class="text-base md:text-lg font-bold tracking-wide text-amber-100 leading-tight">
+                        ইস্ট ইন্ডিয়ান হোরোস্কোপ ও প্রেসক্রিপশন জেনারেটর
+                    </h1>
+                    <p class="text-[11px] text-amber-200/80">
+                        এডিটেবল হেডার ও ফন্ট সাইজ, ৪টি ইস্ট ইন্ডিয়ান চার্ট, ডিভিশনাল চার্ট (Vargas), দশা, ডিজিটাল সাইন, কভার ও শেয়ার
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                <button type="button" onclick="openCoverScreen()"
+                    class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-amber-300/40 text-amber-100 text-xs sm:text-sm font-semibold transition cursor-pointer">
+                    কভার পেজ দেখুন
+                </button>
+                <button type="button" onclick="togglePage2()" id="btn_toggle_page2"
+                    class="px-3 py-1.5 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/45 border border-emerald-300/50 text-emerald-100 text-xs sm:text-sm font-semibold transition cursor-pointer">
+                    + ২য় পেজ যুক্ত করুন
+                </button>
+                <button type="button" onclick="fillSampleData()"
+                    class="px-3 py-1.5 rounded-lg bg-amber-500/25 hover:bg-amber-500/35 border border-amber-300/50 text-amber-100 text-xs sm:text-sm font-semibold transition cursor-pointer">
+                    নমুনা ডেটা বসান
+                </button>
+                <button type="button" onclick="clearAllData()"
+                    class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs sm:text-sm font-medium transition cursor-pointer">
+                    সব তথ্য মুছুন
+                </button>
+                <button type="button" onclick="shareReportOrPdf()" id="btn_share_report"
+                    class="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow flex items-center gap-1.5 transition cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    <span>শেয়ার করুন</span>
+                </button>
+                <button type="button" onclick="window.print()"
+                    class="px-4 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-red-950 font-bold text-xs sm:text-sm shadow flex items-center gap-1.5 transition cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    প্রিন্ট / PDF সেভ করুন
+                </button>
+            </div>
+        </div>
+
+        <!-- Inline Toast Banner for Share / Install Feedback -->
+        <div id="top_toast" class="hidden bg-amber-100 text-red-950 text-xs font-semibold px-4 py-1.5 text-center border-t border-amber-300"></div>
+    </header>
+
+    <!-- MAIN SPLIT WORKSPACE -->
+    <main class="max-w-[1760px] mx-auto flex flex-col lg:flex-row min-h-[calc(100vh-58px)]">
+
+        <!-- LEFT EDITOR SIDEBAR -->
+        <aside class="no-print w-full lg:w-[480px] xl:w-[515px] bg-white border-r border-slate-300 flex flex-col lg:h-[calc(100vh-58px)] shrink-0">
+
+            <!-- 5 Editor Tabs -->
+            <div class="grid grid-cols-5 bg-slate-100 border-b border-slate-200 text-[11px] font-bold text-slate-600 shrink-0">
+                <button type="button" onclick="switchTab(1)" id="tab_btn_1" class="tab-btn py-2.5 px-1 text-center border-b-2 border-red-800 bg-white text-red-900 cursor-pointer transition leading-tight">
+                    ১. পরিচিতি ও দশা
+                </button>
+                <button type="button" onclick="switchTab(2)" id="tab_btn_2" class="tab-btn py-2.5 px-1 text-center border-b-2 border-transparent hover:bg-slate-50 cursor-pointer transition leading-tight">
+                    ২. মূল রাশিচক্র
+                </button>
+                <button type="button" onclick="switchTab(3)" id="tab_btn_3" class="tab-btn py-2.5 px-1 text-center border-b-2 border-transparent hover:bg-slate-50 cursor-pointer transition leading-tight">
+                    ৩. বাকি ৩টি ছক
+                </button>
+                <button type="button" onclick="switchTab(4)" id="tab_btn_4" class="tab-btn py-2.5 px-1 text-center border-b-2 border-transparent hover:bg-slate-50 cursor-pointer transition leading-tight">
+                    ৪. পরামর্শ ও ফল
+                </button>
+                <button type="button" onclick="switchTab(5)" id="tab_btn_5" class="tab-btn py-2.5 px-1 text-center border-b-2 border-transparent hover:bg-slate-50 cursor-pointer transition leading-tight">
+                    ৫. হেডার, সাইজ ও সই
+                </button>
+            </div>
+
+            <!-- Tab Panels Container -->
+            <div class="p-4 overflow-y-auto flex-1 space-y-4">
+
+                <!-- TAB 1: Native Details & Dasha Box -->
+                <div id="tab_panel_1" class="tab-panel space-y-4">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2.5">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-red-900 border-b border-slate-200 pb-1.5">
+                            জাতক / জাতিকার পরিচিতি
+                        </h2>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div class="col-span-2">
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">নাম</label>
+                                <input type="text" id="in_client_name" oninput="renderAll()" placeholder="জাতক/জাতিকার নাম"
+                                    class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-800 outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">জন্ম তারিখ</label>
+                                <input type="text" id="in_dob" oninput="renderAll()" placeholder="১৮/০৪/১৯৯৪"
+                                    class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-800 outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">জন্ম সময়</label>
+                                <input type="text" id="in_tob" oninput="renderAll()" placeholder="সকাল ০৭:৪০"
+                                    class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-800 outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">জন্মস্থান</label>
+                                <input type="text" id="in_pob" oninput="renderAll()" placeholder="কলকাতা"
+                                    class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-800 outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">রাশি</label>
+                                <input type="text" id="in_rashi" oninput="renderAll()" placeholder="যেমন: কর্কট"
+                                    class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-800 outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">নক্ষত্র</label>
+                                <input type="text" id="in_nakshatra" oninput="renderAll()" placeholder="যেমন: অশ্লেষা (২য় পদ)"
+                                    class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-800 outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">গণ</label>
+                                <input type="text" id="in_gana" list="gana_suggestions" oninput="renderAll()" placeholder="দেব / নর / রাক্ষস"
+                                    class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-800 outline-none bg-white">
+                                <datalist id="gana_suggestions">
+                                    <option value="দেব গণ">
+                                    <option value="নর গণ">
+                                    <option value="রাক্ষস গণ">
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dasha Box: দশা, অন্তর্দশা, পরবর্তী অন্তর্দশা, পরবর্তী দশা -->
+                    <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 space-y-2">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-red-900 border-b border-amber-200 pb-1.5">
+                            দশা বিবরণী
+                        </h2>
+                        <div class="space-y-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-0.5">দশা</label>
+                                <input type="text" id="in_dasha" oninput="renderAll()" placeholder="যেমন: বুধ (২০১৮ - ২০৩৫)"
+                                    class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 bg-white outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-0.5">অন্তর্দশা</label>
+                                <input type="text" id="in_antardasha" oninput="renderAll()" placeholder="যেমন: শুক্র (২০২৫ - ২০২৮)"
+                                    class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 bg-white outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-0.5">পরবর্তী অন্তর্দশা</label>
+                                <input type="text" id="in_next_antardasha" oninput="renderAll()" placeholder="যেমন: সূর্য (২০২৮ - ২০২৯)"
+                                    class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 bg-white outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-0.5">পরবর্তী দশা</label>
+                                <input type="text" id="in_next_dasha" oninput="renderAll()" placeholder="যেমন: কেতু (২০৩৫ - ২০৪২)"
+                                    class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 bg-white outline-none">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: Main East Indian Chart (1st Chart) -->
+                <div id="tab_panel_2" class="tab-panel hidden space-y-3">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2">
+                            <div class="flex-1 min-w-[130px]">
+                                <label class="block text-[11px] font-bold text-slate-600 mb-0.5">প্রধান ছকের শিরোনাম</label>
+                                <input type="text" id="c1_title" oninput="renderAll()" value="মূল রাশিচক্র"
+                                    class="w-full px-2.5 py-1 text-sm rounded-lg border border-slate-300 bg-white font-bold text-red-900 outline-none">
+                            </div>
+                            <div class="w-32">
+                                <label class="block text-[11px] font-bold text-slate-600 mb-0.5">লগ্ন নির্বাচন</label>
+                                <select id="c1_lagna" onchange="renderAll()"
+                                    class="w-full px-2 py-1 text-sm rounded-lg border border-slate-300 bg-white font-semibold text-red-900 outline-none cursor-pointer">
+                                    <option value="">-- লগ্ন --</option>
+                                    <option value="mesha">মেষ লগ্ন</option>
+                                    <option value="vrisha">বৃষ লগ্ন</option>
+                                    <option value="mithuna">মিথুন লগ্ন</option>
+                                    <option value="karkata">কর্কট লগ্ন</option>
+                                    <option value="simha">সিংহ লগ্ন</option>
+                                    <option value="kanya">কন্যা লগ্ন</option>
+                                    <option value="tula">তুলা লগ্ন</option>
+                                    <option value="vrishchika">বৃশ্চিক লগ্ন</option>
+                                    <option value="dhanu">ধনু লগ্ন</option>
+                                    <option value="makara">মকর লগ্ন</option>
+                                    <option value="kumbha">কুম্ভ লগ্ন</option>
+                                    <option value="meena">মীন লগ্ন</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-500">প্রতিটি রাশির ঘরে গ্রহের নাম বা নক্ষত্র/ভাব তথ্য লিখুন (ইস্ট ইন্ডিয়ান ঘড়ির কাঁটার বিপরীত ক্রমে ছকে বসবে):</p>
+                        <div id="c1_inputs_container" class="grid grid-cols-3 gap-2"></div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: Other 3 East Indian Charts with Divisional Chart Dropdowns -->
+                <div id="tab_panel_3" class="tab-panel hidden space-y-3.5">
+                    <!-- Chart 2 -->
+                    <div class="bg-amber-50/50 border border-amber-200 rounded-xl p-3 space-y-2">
+                        <div class="grid grid-cols-12 gap-1.5 border-b border-amber-200 pb-2">
+                            <div class="col-span-5">
+                                <label class="block text-[10px] font-bold text-amber-950 mb-0.5">২য় ছকের নাম (এডিটেবল)</label>
+                                <input type="text" id="c2_title" oninput="renderAll()" value="নবাংশ" placeholder="চার্টের নাম..."
+                                    class="w-full px-2 py-1 text-xs rounded-lg border border-amber-300 bg-white font-bold text-amber-950 outline-none">
+                            </div>
+                            <div class="col-span-4">
+                                <label class="block text-[10px] font-bold text-amber-950 mb-0.5">ডিভিশনাল / বিশেষ চার্ট</label>
+                                <select id="c2_preset" onchange="applyChartPreset('c2', this.value)"
+                                    class="w-full px-1.5 py-1 text-[11px] rounded-lg border border-amber-300 bg-amber-100/80 font-semibold text-amber-950 outline-none cursor-pointer">
+                                    <option value="">-- সিলেক্ট করুন --</option>
+                                    <option value="নবাংশ">নবাংশ (D9)</option>
+                                    <option value="হোরা">হোরা (D2)</option>
+                                    <option value="দ্রেক্কানা">দ্রেক্কানা (D3)</option>
+                                    <option value="চতুর্থাংশ">চতুর্থাংশ (D4)</option>
+                                    <option value="সপ্তমাংশ">সপ্তমাংশ (D7)</option>
+                                    <option value="দশমাংশ">দশমাংশ (D10)</option>
+                                    <option value="দ্বাদশাংশ">দ্বাদশাংশ (D12)</option>
+                                    <option value="ষোড়শাংশ">ষোড়শাংশ (D16)</option>
+                                    <option value="বিংশাংশ">বিংশাংশ (D20)</option>
+                                    <option value="চতুর্বিংশাংশ">চতুর্বিংশাংশ (D24)</option>
+                                    <option value="সপ্তবিংশাংশ">সপ্তবিংশাংশ (D27)</option>
+                                    <option value="ত্রিংশাংশ">ত্রিংশাংশ (D30)</option>
+                                    <option value="খবেদাংশ">খবেদাংশ (D40)</option>
+                                    <option value="অক্ষবেদাংশ">অক্ষবেদাংশ (D45)</option>
+                                    <option value="ষষ্ট্যাংশ">ষষ্ট্যাংশ (D60)</option>
+                                    <option value="ভাব চলিত">ভাব চলিত</option>
+                                    <option value="গোচর">গোচর</option>
+                                    <option value="চন্দ্র কুণ্ডলী">চন্দ্র কুণ্ডলী</option>
+                                </select>
+                            </div>
+                            <div class="col-span-3">
+                                <label class="block text-[10px] font-bold text-amber-950 mb-0.5">লগ্ন</label>
+                                <select id="c2_lagna" onchange="renderAll()"
+                                    class="w-full px-1 py-1 text-xs rounded-lg border border-slate-300 bg-white font-semibold text-red-900 outline-none cursor-pointer">
+                                    <option value="">লগ্ন</option>
+                                    <option value="mesha">মেষ</option>
+                                    <option value="vrisha">বৃষ</option>
+                                    <option value="mithuna">মিথুন</option>
+                                    <option value="karkata">কর্কট</option>
+                                    <option value="simha">সিংহ</option>
+                                    <option value="kanya">কন্যা</option>
+                                    <option value="tula">তুলা</option>
+                                    <option value="vrishchika">বৃশ্চিক</option>
+                                    <option value="dhanu">ধনু</option>
+                                    <option value="makara">মকর</option>
+                                    <option value="kumbha">কুম্ভ</option>
+                                    <option value="meena">মীন</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="c2_inputs_container" class="grid grid-cols-3 gap-1.5"></div>
+                    </div>
+
+                    <!-- Chart 3 -->
+                    <div class="bg-emerald-50/50 border border-emerald-200 rounded-xl p-3 space-y-2">
+                        <div class="grid grid-cols-12 gap-1.5 border-b border-emerald-200 pb-2">
+                            <div class="col-span-5">
+                                <label class="block text-[10px] font-bold text-emerald-950 mb-0.5">৩য় ছকের নাম (এডিটেবল)</label>
+                                <input type="text" id="c3_title" oninput="renderAll()" value="গোচর" placeholder="চার্টের নাম..."
+                                    class="w-full px-2 py-1 text-xs rounded-lg border border-emerald-300 bg-white font-bold text-emerald-950 outline-none">
+                            </div>
+                            <div class="col-span-4">
+                                <label class="block text-[10px] font-bold text-emerald-950 mb-0.5">ডিভিশনাল / বিশেষ চার্ট</label>
+                                <select id="c3_preset" onchange="applyChartPreset('c3', this.value)"
+                                    class="w-full px-1.5 py-1 text-[11px] rounded-lg border border-emerald-300 bg-emerald-100/80 font-semibold text-emerald-950 outline-none cursor-pointer">
+                                    <option value="">-- সিলেক্ট করুন --</option>
+                                    <option value="নবাংশ">নবাংশ (D9)</option>
+                                    <option value="হোরা">হোরা (D2)</option>
+                                    <option value="দ্রেক্কানা">দ্রেক্কানা (D3)</option>
+                                    <option value="চতুর্থাংশ">চতুর্থাংশ (D4)</option>
+                                    <option value="সপ্তমাংশ">সপ্তমাংশ (D7)</option>
+                                    <option value="দশমাংশ">দশমাংশ (D10)</option>
+                                    <option value="দ্বাদশাংশ">দ্বাদশাংশ (D12)</option>
+                                    <option value="ষোড়শাংশ">ষোড়শাংশ (D16)</option>
+                                    <option value="বিংশাংশ">বিংশাংশ (D20)</option>
+                                    <option value="চতুর্বিংশাংশ">চতুর্বিংশাংশ (D24)</option>
+                                    <option value="সপ্তবিংশাংশ">সপ্তবিংশাংশ (D27)</option>
+                                    <option value="ত্রিংশাংশ">ত্রিংশাংশ (D30)</option>
+                                    <option value="খবেদাংশ">খবেদাংশ (D40)</option>
+                                    <option value="অক্ষবেদাংশ">অক্ষবেদাংশ (D45)</option>
+                                    <option value="ষষ্ট্যাংশ">ষষ্ট্যাংশ (D60)</option>
+                                    <option value="ভাব চলিত">ভাব চলিত</option>
+                                    <option value="গোচর">গোচর</option>
+                                    <option value="চন্দ্র কুণ্ডলী">চন্দ্র কুণ্ডলী</option>
+                                </select>
+                            </div>
+                            <div class="col-span-3">
+                                <label class="block text-[10px] font-bold text-emerald-950 mb-0.5">লগ্ন</label>
+                                <select id="c3_lagna" onchange="renderAll()"
+                                    class="w-full px-1 py-1 text-xs rounded-lg border border-slate-300 bg-white font-semibold text-red-900 outline-none cursor-pointer">
+                                    <option value="">লগ্ন</option>
+                                    <option value="mesha">মেষ</option>
+                                    <option value="vrisha">বৃষ</option>
+                                    <option value="mithuna">মিথুন</option>
+                                    <option value="karkata">কর্কট</option>
+                                    <option value="simha">সিংহ</option>
+                                    <option value="kanya">কন্যা</option>
+                                    <option value="tula">তুলা</option>
+                                    <option value="vrishchika">বৃশ্চিক</option>
+                                    <option value="dhanu">ধনু</option>
+                                    <option value="makara">মকর</option>
+                                    <option value="kumbha">কুম্ভ</option>
+                                    <option value="meena">মীন</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="c3_inputs_container" class="grid grid-cols-3 gap-1.5"></div>
+                    </div>
+
+                    <!-- Chart 4 -->
+                    <div class="bg-sky-50/50 border border-sky-200 rounded-xl p-3 space-y-2">
+                        <div class="grid grid-cols-12 gap-1.5 border-b border-sky-200 pb-2">
+                            <div class="col-span-5">
+                                <label class="block text-[10px] font-bold text-sky-950 mb-0.5">৪র্থ ছকের নাম (এডিটেবল)</label>
+                                <input type="text" id="c4_title" oninput="renderAll()" value="ভাব চলিত" placeholder="চার্টের নাম..."
+                                    class="w-full px-2 py-1 text-xs rounded-lg border border-sky-300 bg-white font-bold text-sky-950 outline-none">
+                            </div>
+                            <div class="col-span-4">
+                                <label class="block text-[10px] font-bold text-sky-950 mb-0.5">ডিভিশনাল / বিশেষ চার্ট</label>
+                                <select id="c4_preset" onchange="applyChartPreset('c4', this.value)"
+                                    class="w-full px-1.5 py-1 text-[11px] rounded-lg border border-sky-300 bg-sky-100/80 font-semibold text-sky-950 outline-none cursor-pointer">
+                                    <option value="">-- সিলেক্ট করুন --</option>
+                                    <option value="নবাংশ">নবাংশ (D9)</option>
+                                    <option value="হোরা">হোরা (D2)</option>
+                                    <option value="দ্রেক্কানা">দ্রেক্কানা (D3)</option>
+                                    <option value="চতুর্থাংশ">চতুর্থাংশ (D4)</option>
+                                    <option value="সপ্তমাংশ">সপ্তমাংশ (D7)</option>
+                                    <option value="দশমাংশ">দশমাংশ (D10)</option>
+                                    <option value="দ্বাদশাংশ">দ্বাদশাংশ (D12)</option>
+                                    <option value="ষোড়শাংশ">ষোড়শাংশ (D16)</option>
+                                    <option value="বিংশাংশ">বিংশাংশ (D20)</option>
+                                    <option value="চতুর্বিংশাংশ">চতুর্বিংশাংশ (D24)</option>
+                                    <option value="সপ্তবিংশাংশ">সপ্তবিংশাংশ (D27)</option>
+                                    <option value="ত্রিংশাংশ">ত্রিংশাংশ (D30)</option>
+                                    <option value="খবেদাংশ">খবেদাংশ (D40)</option>
+                                    <option value="অক্ষবেদাংশ">অক্ষবেদাংশ (D45)</option>
+                                    <option value="ষষ্ট্যাংশ">ষষ্ট্যাংশ (D60)</option>
+                                    <option value="ভাব চলিত">ভাব চলিত</option>
+                                    <option value="গোচর">গোচর</option>
+                                    <option value="চন্দ্র কুণ্ডলী">চন্দ্র কুণ্ডলী</option>
+                                </select>
+                            </div>
+                            <div class="col-span-3">
+                                <label class="block text-[10px] font-bold text-sky-950 mb-0.5">লগ্ন</label>
+                                <select id="c4_lagna" onchange="renderAll()"
+                                    class="w-full px-1 py-1 text-xs rounded-lg border border-slate-300 bg-white font-semibold text-red-900 outline-none cursor-pointer">
+                                    <option value="">লগ্ন</option>
+                                    <option value="mesha">মেষ</option>
+                                    <option value="vrisha">বৃষ</option>
+                                    <option value="mithuna">মিথুন</option>
+                                    <option value="karkata">কর্কট</option>
+                                    <option value="simha">সিংহ</option>
+                                    <option value="kanya">কন্যা</option>
+                                    <option value="tula">তুলা</option>
+                                    <option value="vrishchika">বৃশ্চিক</option>
+                                    <option value="dhanu">ধনু</option>
+                                    <option value="makara">মকর</option>
+                                    <option value="kumbha">কুম্ভ</option>
+                                    <option value="meena">মীন</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="c4_inputs_container" class="grid grid-cols-3 gap-1.5"></div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: Consultation Topic & Combined Prediction + Remedy -->
+                <div id="tab_panel_4" class="tab-panel hidden space-y-4">
+                    <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 space-y-1.5">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-red-900">
+                            পরামর্শের বিষয় (স্বয়ংক্রিয়ভাবে বড় হবে)
+                        </label>
+                        <textarea id="in_topic" rows="2" oninput="syncFromSidebarTopic()" placeholder="পরামর্শের বিষয় লিখুন..."
+                            class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-800 outline-none bg-white font-medium"></textarea>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1.5">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-red-900">
+                            ফলাদেশ ও প্রতিকার (১ম পেজ — লেখা বাড়লে বড় হবে)
+                        </label>
+                        <textarea id="in_pred_remedy_p1" rows="9" oninput="syncFromSidebarP1()" placeholder="১ম পেজের ফলাদেশ ও প্রতিকার লিখুন..."
+                            class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-800 outline-none bg-white leading-relaxed"></textarea>
+                    </div>
+
+                    <div id="sidebar_p2_box" class="hidden bg-emerald-50/60 border border-emerald-200 rounded-xl p-3.5 space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-emerald-950">
+                                ফলাদেশ ও প্রতিকার (২য় পেজ)
+                            </label>
+                            <button type="button" onclick="togglePage2()" class="text-[11px] text-red-700 font-bold hover:underline cursor-pointer">
+                                ২য় পেজ বাদ দিন
+                            </button>
+                        </div>
+                        <textarea id="in_pred_remedy_p2" rows="7" oninput="syncFromSidebarP2()" placeholder="২য় পেজের ফলাদেশ ও প্রতিকার লিখুন..."
+                            class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-800 outline-none bg-white leading-relaxed"></textarea>
+                    </div>
+                </div>
+
+                <!-- TAB 5: Editable Header, Font Sizes, Date, Footer & Digital Signature -->
+                <div id="tab_panel_5" class="tab-panel hidden space-y-4">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-3">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-red-900 border-b border-slate-200 pb-1.5">
+                            হেডার লেখা ও ফন্ট সাইজ নিয়ন্ত্রণ
+                        </h2>
+
+                        <!-- Name + Font Size -->
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-semibold text-slate-700">প্রধান শিরোনাম (যুগান্ত শাস্ত্রী)</label>
+                                <span id="lbl_size_name" class="text-[11px] font-bold text-red-900">23px</span>
+                            </div>
+                            <input type="text" id="in_astro_name" oninput="renderAll()" value="যুগান্ত শাস্ত্রী"
+                                class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 bg-white outline-none font-bold">
+                            <input type="range" id="fs_astro_name" min="16" max="34" value="23" oninput="renderHeaderSizes()"
+                                class="w-full accent-red-800 cursor-pointer">
+                        </div>
+
+                        <!-- Subtitle + Font Size -->
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-semibold text-slate-700">উপাধি ও বিশেষত্ব</label>
+                                <span id="lbl_size_title" class="text-[11px] font-bold text-red-900">11.5px</span>
+                            </div>
+                            <input type="text" id="in_astro_title" oninput="renderAll()" value="জ্যোতিষ ভারতী, হস্তরেখা ও বাস্তুশাস্ত্রবিদ (স্বর্ণপদক প্রাপ্ত)"
+                                class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 bg-white outline-none">
+                            <input type="range" id="fs_astro_title" min="9" max="18" step="0.5" value="11.5" oninput="renderHeaderSizes()"
+                                class="w-full accent-red-800 cursor-pointer">
+                        </div>
+
+                        <!-- Contact + Font Size -->
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-semibold text-slate-700">চেম্বার ঠিকানা ও যোগাযোগ</label>
+                                <span id="lbl_size_contact" class="text-[11px] font-bold text-red-900">10.5px</span>
+                            </div>
+                            <input type="text" id="in_astro_contact" oninput="renderAll()" value="চেম্বার: গড়িয়াহাট মোড়, কলকাতা | যোগাযোগ: +৯১ ৯৮৩০X XXXXX"
+                                class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 bg-white outline-none">
+                            <input type="range" id="fs_astro_contact" min="8.5" max="16" step="0.5" value="10.5" oninput="renderHeaderSizes()"
+                                class="w-full accent-red-800 cursor-pointer">
+                        </div>
+
+                        <!-- Consultation Date -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">তারিখ (তারিখের পাশে বসবে)</label>
+                            <input type="text" id="in_consult_date" oninput="renderAll()"
+                                class="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 bg-white outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Digital Signature Upload -->
+                    <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 space-y-2.5">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-red-900 border-b border-amber-200 pb-1.5">
+                            ডিজিটাল সাইন (জ্যোতিষীর সই)
+                        </h2>
+                        <input type="file" id="in_sig_file" accept="image/*" onchange="handleSignatureUpload(event)"
+                            class="block w-full text-xs text-slate-700 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-red-900 file:text-amber-50 hover:file:bg-red-800 cursor-pointer">
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-[11px] text-slate-600">স্বচ্ছ বা সাদা ব্যাকগ্রাউন্ডের স্বাক্ষর ছবি দিন</span>
+                            <button type="button" onclick="removeSignature()" class="px-2.5 py-1 rounded bg-red-100 hover:bg-red-200 text-red-900 text-xs font-semibold cursor-pointer">
+                                সাইন মুছুন
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Editable Footer & Footer Font Size -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2.5">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 border-b border-slate-200 pb-1.5">
+                            ফুটার ও স্বাক্ষর লেবেল
+                        </h2>
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-semibold text-slate-700">ফুটার নোট</label>
+                                <span id="lbl_size_footer" class="text-[11px] font-bold text-red-900">10.5px</span>
+                            </div>
+                            <input type="text" id="in_footer_note" oninput="renderAll()" value="সাক্ষাতের সময়: রবি ও বৃহস্পতি সকাল ১০টা - দুপুর ২টা। জ্যোতিষশাস্ত্র কর্মের সহায়ক পথপ্রদর্শক।"
+                                class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 bg-white outline-none">
+                            <input type="range" id="fs_footer_note" min="8.5" max="15" step="0.5" value="10.5" oninput="renderHeaderSizes()"
+                                class="w-full accent-red-800 cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">স্বাক্ষর শিরোনাম</label>
+                            <input type="text" id="in_sig_label" oninput="renderAll()" value="জ্যোতিষীর সই"
+                                class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 bg-white outline-none">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- RIGHT PANEL: LIVE A4 PREVIEW -->
+        <section class="print-wrapper flex-1 p-3 md:p-6 overflow-x-auto flex flex-col items-center">
+            <div class="no-print w-full max-w-[210mm] mb-2 flex items-center justify-between text-xs text-slate-600">
+                <span class="font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    লাইভ A4 প্রিভিউ — পেজের যেকোনো লেখায় সরাসরি ক্লিক করেও এডিট করতে পারবেন
+                </span>
+                <span>A4 (210mm × 297mm)</span>
+            </div>
+
+            <!-- ==================== PAGE 1 ==================== -->
+            <div class="a4-sheet" id="page_1">
+                <div class="a4-border-frame">
+
+                    <div class="space-y-2">
+
+                        <!-- 1. EDITABLE ASTROLOGER HEADER + DATE INLINE BESIDE 'তারিখ:' -->
+                        <div class="border-b-2 border-[#7f1d1d] pb-1.5">
+                            <div class="flex items-center justify-between gap-2 text-[11px] text-slate-800 mb-0.5">
+                                <div class="w-20"></div>
+                                <div class="flex items-center gap-1 font-bold text-[#7f1d1d]">
+                                    <span>তারিখ:</span>
+                                    <span id="out_consult_date_p1" contenteditable="true" oninput="syncInline('in_consult_date', this.textContent)"
+                                        class="text-slate-900 font-semibold border-b border-dotted border-slate-400 min-w-[82px] px-1"></span>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <h1 id="out_astro_name_p1" contenteditable="true" oninput="syncHeaderInline('in_astro_name', this.textContent)"
+                                    class="font-serif-bn font-bold text-[#6e1212] leading-tight" style="font-size: 23px;">
+                                    যুগান্ত শাস্ত্রী
+                                </h1>
+                                <p id="out_astro_title_p1" contenteditable="true" oninput="syncHeaderInline('in_astro_title', this.textContent)"
+                                    class="font-semibold text-slate-700 mt-0.5" style="font-size: 11.5px;">
+                                    জ্যোতিষ ভারতী, হস্তরেখা ও বাস্তুশাস্ত্রবিদ (স্বর্ণপদক প্রাপ্ত)
+                                </p>
+                                <p id="out_astro_contact_p1" contenteditable="true" oninput="syncHeaderInline('in_astro_contact', this.textContent)"
+                                    class="text-slate-800 mt-1 bg-amber-50 border border-amber-300 inline-block px-3 py-0.5 rounded" style="font-size: 10.5px;">
+                                    চেম্বার: গড়িয়াহাট মোড়, কলকাতা | যোগাযোগ: +৯১ ৯৮৩০X XXXXX
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 2. CLIENT DETAILS GRID (With Gana) -->
+                        <div class="bg-[#fcf8ef] border border-[#d4af37] rounded px-2.5 py-1.5 text-[11px]">
+                            <div class="grid grid-cols-12 gap-x-2.5 gap-y-1">
+                                <div class="col-span-6 flex items-baseline">
+                                    <span class="font-bold text-[#7f1d1d] w-14 shrink-0">নাম:</span>
+                                    <span id="out_client_name" contenteditable="true" oninput="syncInline('in_client_name', this.textContent)"
+                                        class="font-bold text-slate-900 border-b border-dotted border-slate-400 flex-1 min-h-[15px]"></span>
+                                </div>
+                                <div class="col-span-3 flex items-baseline">
+                                    <span class="font-bold text-[#7f1d1d] w-14 shrink-0">জন্ম তাং:</span>
+                                    <span id="out_dob" contenteditable="true" oninput="syncInline('in_dob', this.textContent)"
+                                        class="text-slate-900 border-b border-dotted border-slate-400 flex-1 min-h-[15px]"></span>
+                                </div>
+                                <div class="col-span-3 flex items-baseline">
+                                    <span class="font-bold text-[#7f1d1d] w-11 shrink-0">সময়:</span>
+                                    <span id="out_tob" contenteditable="true" oninput="syncInline('in_tob', this.textContent)"
+                                        class="text-slate-900 border-b border-dotted border-slate-400 flex-1 min-h-[15px]"></span>
+                                </div>
+
+                                <div class="col-span-3 flex items-baseline">
+                                    <span class="font-bold text-[#7f1d1d] w-14 shrink-0">জন্মস্থান:</span>
+                                    <span id="out_pob" contenteditable="true" oninput="syncInline('in_pob', this.textContent)"
+                                        class="text-slate-900 border-b border-dotted border-slate-400 flex-1 min-h-[15px]"></span>
+                                </div>
+                                <div class="col-span-2 flex items-baseline">
+                                    <span class="font-bold text-[#7f1d1d] w-8 shrink-0">লগ্ন:</span>
+                                    <span id="out_lagna"
+                                        class="font-bold text-[#801818] border-b border-dotted border-slate-400 flex-1 min-h-[15px]"></span>
+                                </div>
+                                <div class="col-span-2 flex items-baseline">
+                                    <span class="font-bold text-[#7f1d1d] w-8 shrink-0">রাশি:</span>
+                                    <span id="out_rashi" contenteditable="true" oninput="syncInline('in_rashi', this.textContent)"
+                                        class="font-semibold text-slate-900 border-b border-dotted border-slate-400 flex-1 min-h-[15px]"></span>
+                                </div>
+                                <div class="col-span-3 flex items-baseline">
+                                    <span class="font-bold text-[#7f1d1d] w-10 shrink-0">নক্ষত্র:</span>
+                                    <span id="out_nakshatra" contenteditable="true" oninput="syncInline('in_nakshatra', this.textContent)"
+                                        class="font-semibold text-slate-900 border-b border-dotted border-slate-400 flex-1 min-h-[15px]"></span>
+                                </div>
+                                <div class="col-span-2 flex items-baseline">
+                                    <span class="font-bold text-[#7f1d1d] w-7 shrink-0">গণ:</span>
+                                    <span id="out_gana" contenteditable="true" oninput="syncInline('in_gana', this.textContent)"
+                                        class="font-semibold text-slate-900 border-b border-dotted border-slate-400 flex-1 min-h-[15px]"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. FOUR EAST INDIAN CHARTS + DASHA BOX -->
+                        <div class="grid grid-cols-12 gap-2 items-stretch pt-0.5">
+
+                            <!-- Larger Main Chart (Left: 5 cols) -->
+                            <div class="col-span-5 flex flex-col justify-center">
+                                <div id="svg_chart_1" class="w-full aspect-square"></div>
+                            </div>
+
+                            <!-- Two Divisional/Custom Charts (Middle: 3 cols stacked) -->
+                            <div class="col-span-3 flex flex-col justify-between gap-1.5">
+                                <div class="w-full aspect-square max-w-[134px] mx-auto">
+                                    <div id="svg_chart_2" class="w-full h-full"></div>
+                                </div>
+                                <div class="w-full aspect-square max-w-[134px] mx-auto">
+                                    <div id="svg_chart_3" class="w-full h-full"></div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Dasha Box (4 items) + 4th Small Chart (4 cols) -->
+                            <div class="col-span-4 flex flex-col justify-between gap-1.5">
+                                <div class="border-[1.5px] border-[#7f1d1d] bg-[#fffaf0] rounded-sm">
+                                    <div class="bg-[#7f1d1d] text-amber-50 text-[10px] font-bold text-center py-0.5 tracking-wide">
+                                        দশা বিবরণী
+                                    </div>
+                                    <div class="px-2 py-1 text-[9.5px] space-y-0.5 leading-tight">
+                                        <div class="flex items-baseline gap-1 border-b border-amber-200/80 pb-0.5">
+                                            <span class="font-bold text-[#7f1d1d] shrink-0">দশা:</span>
+                                            <span id="out_dasha" contenteditable="true" oninput="syncInline('in_dasha', this.textContent)"
+                                                class="font-bold text-slate-900 flex-1 min-h-[12px]"></span>
+                                        </div>
+                                        <div class="flex items-baseline gap-1 border-b border-amber-200/80 pb-0.5">
+                                            <span class="font-bold text-[#7f1d1d] shrink-0">অন্তর্দশা:</span>
+                                            <span id="out_antardasha" contenteditable="true" oninput="syncInline('in_antardasha', this.textContent)"
+                                                class="font-bold text-slate-900 flex-1 min-h-[12px]"></span>
+                                        </div>
+                                        <div class="flex items-baseline gap-1 border-b border-amber-200/80 pb-0.5">
+                                            <span class="font-bold text-[#7f1d1d] shrink-0">পরবর্তী অন্তর্দশা:</span>
+                                            <span id="out_next_antardasha" contenteditable="true" oninput="syncInline('in_next_antardasha', this.textContent)"
+                                                class="font-bold text-slate-900 flex-1 min-h-[12px]"></span>
+                                        </div>
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="font-bold text-[#7f1d1d] shrink-0">পরবর্তী দশা:</span>
+                                            <span id="out_next_dasha" contenteditable="true" oninput="syncInline('in_next_dasha', this.textContent)"
+                                                class="font-bold text-slate-900 flex-1 min-h-[12px]"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="w-full aspect-square max-w-[130px] mx-auto">
+                                    <div id="svg_chart_4" class="w-full h-full"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- 4. AUTO-EXPANDING 'পরামর্শের বিষয়' BOX -->
+                        <div class="border-[1.5px] border-[#b45309] bg-[#fcf7eb] rounded px-2.5 py-1 flex items-start gap-2 text-[11.5px]">
+                            <span class="font-bold text-[#7f1d1d] shrink-0 pt-0.5">পরামর্শের বিষয়:</span>
+                            <textarea id="sheet_topic_area" rows="1" oninput="syncFromSheetTopic(this)"
+                                placeholder="এখানে পরামর্শের বিষয় লিখুন (লেখা বাড়লে বক্স স্বয়ংক্রিয়ভাবে বড় হবে)..."
+                                class="sheet-auto-textarea font-semibold text-slate-900 flex-1 leading-snug"></textarea>
+                        </div>
+
+                        <!-- 5. SINGLE LARGE COMBINED BOX: ফলাদেশ ও প্রতিকার (AUTO-EXPANDING) -->
+                        <div class="pt-0.5">
+                            <div class="flex items-center">
+                                <span class="bg-[#7f1d1d] text-amber-50 text-[11.5px] font-bold px-3 py-0.5 rounded-t tracking-wide">
+                                    ফলাদেশ ও প্রতিকার
+                                </span>
+                                <div class="flex-1 border-b-[1.5px] border-[#7f1d1d]"></div>
+                            </div>
+                            <div class="border-[1.5px] border-t-0 border-[#b45309] bg-[#fffdf8] rounded-b p-2.5 min-h-[345px]">
+                                <textarea id="sheet_pred_remedy_p1" rows="13" oninput="syncFromSheetP1(this)"
+                                    placeholder="এখানে বিস্তারিত ফলাদেশ ও প্রতিকার লিখুন..."
+                                    class="sheet-auto-textarea text-[12px] text-slate-900 leading-[1.6]"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- 6. FOOTER WITH DIGITAL SIGNATURE ABOVE 'জ্যোতিষীর সই' -->
+                    <div class="pt-2 mt-1.5 flex items-end justify-between">
+                        <div id="out_footer_note_p1" contenteditable="true" oninput="syncFooterInline('in_footer_note', this.textContent)"
+                            class="text-slate-600 max-w-[66%] leading-snug" style="font-size: 10.5px;">
+                            সাক্ষাতের সময়: রবি ও বৃহস্পতি সকাল ১০টা - দুপুর ২টা। জ্যোতিষশাস্ত্র কর্মের সহায়ক পথপ্রদর্শক।
+                        </div>
+                        <div class="text-center min-w-[155px] flex flex-col items-center">
+                            <div class="h-11 flex items-end justify-center mb-0.5">
+                                <img id="out_sig_img_p1" src="" alt="ডিজিটাল সই" class="max-h-11 max-w-[140px] object-contain hidden">
+                            </div>
+                            <div id="out_sig_label_p1" contenteditable="true" oninput="syncFooterInline('in_sig_label', this.textContent)"
+                                class="w-full border-t border-slate-700 pt-0.5 font-bold text-[#7f1d1d] text-[10.5px]">
+                                জ্যোতিষীর সই
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ==================== OPTIONAL PAGE 2 (HEADER + ফলাদেশ ও প্রতিকার BOX ONLY) ==================== -->
+            <div class="a4-sheet hidden" id="page_2">
+                <div class="a4-border-frame">
+
+                    <div class="space-y-3 flex-1 flex flex-col">
+
+                        <!-- Editable Header + Date Beside 'তারিখ:' -->
+                        <div class="border-b-2 border-[#7f1d1d] pb-1.5">
+                            <div class="flex items-center justify-between gap-2 text-[11px] text-slate-800 mb-0.5">
+                                <div class="w-20"></div>
+                                <div class="flex items-center gap-1 font-bold text-[#7f1d1d]">
+                                    <span>তারিখ:</span>
+                                    <span id="out_consult_date_p2" contenteditable="true" oninput="syncInline('in_consult_date', this.textContent)"
+                                        class="text-slate-900 font-semibold border-b border-dotted border-slate-400 min-w-[82px] px-1"></span>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <h2 id="out_astro_name_p2" contenteditable="true" oninput="syncHeaderInline('in_astro_name', this.textContent)"
+                                    class="font-serif-bn font-bold text-[#6e1212] leading-tight" style="font-size: 23px;">
+                                    যুগান্ত শাস্ত্রী
+                                </h2>
+                                <p id="out_astro_title_p2" contenteditable="true" oninput="syncHeaderInline('in_astro_title', this.textContent)"
+                                    class="font-semibold text-slate-700 mt-0.5" style="font-size: 11.5px;">
+                                    জ্যোতিষ ভারতী, হস্তরেখা ও বাস্তুশাস্ত্রবিদ (স্বর্ণপদক প্রাপ্ত)
+                                </p>
+                                <p id="out_astro_contact_p2" contenteditable="true" oninput="syncHeaderInline('in_astro_contact', this.textContent)"
+                                    class="text-slate-800 mt-1 bg-amber-50 border border-amber-300 inline-block px-3 py-0.5 rounded" style="font-size: 10.5px;">
+                                    চেম্বার: গড়িয়াহাট মোড়, কলকাতা | যোগাযোগ: +৯১ ৯৮৩০X XXXXX
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Combined Box Titled 'ফলাদেশ ও প্রতিকার' -->
+                        <div class="flex-1 flex flex-col pt-1">
+                            <div class="flex items-center">
+                                <span class="bg-[#7f1d1d] text-amber-50 text-xs font-bold px-3.5 py-1 rounded-t tracking-wide">
+                                    ফলাদেশ ও প্রতিকার
+                                </span>
+                                <div class="flex-1 border-b-[1.5px] border-[#7f1d1d]"></div>
+                            </div>
+                            <div class="border-[1.5px] border-t-0 border-[#b45309] bg-[#fffdf8] rounded-b p-3.5 flex-1">
+                                <textarea id="sheet_pred_remedy_p2" rows="22" oninput="syncFromSheetP2(this)"
+                                    placeholder="অতিরিক্ত ফলাদেশ ও প্রতিকার এখানে লিখুন..."
+                                    class="sheet-auto-textarea text-[12.5px] text-slate-900 leading-[1.68]"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Footer on Page 2 -->
+                    <div class="pt-2.5 mt-2 flex items-end justify-between">
+                        <div id="out_footer_note_p2" contenteditable="true" oninput="syncFooterInline('in_footer_note', this.textContent)"
+                            class="text-slate-600 max-w-[66%] leading-snug" style="font-size: 10.5px;">
+                            সাক্ষাতের সময়: রবি ও বৃহস্পতি সকাল ১০টা - দুপুর ২টা। জ্যোতিষশাস্ত্র কর্মের সহায়ক পথপ্রদর্শক।
+                        </div>
+                        <div class="text-center min-w-[155px] flex flex-col items-center">
+                            <div class="h-11 flex items-end justify-center mb-0.5">
+                                <img id="out_sig_img_p2" src="" alt="ডিজিটাল সই" class="max-h-11 max-w-[140px] object-contain hidden">
+                            </div>
+                            <div id="out_sig_label_p2" contenteditable="true" oninput="syncFooterInline('in_sig_label', this.textContent)"
+                                class="w-full border-t border-slate-700 pt-0.5 font-bold text-[#7f1d1d] text-[10.5px]">
+                                জ্যোতিষীর সই
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // Twelve Bengali Zodiac Signs (Rashis)
+        const RASHIS = [
+            { key: 'mesha', bn: 'মেষ' },
+            { key: 'vrisha', bn: 'বৃষ' },
+            { key: 'mithuna', bn: 'মিথুন' },
+            { key: 'karkata', bn: 'কর্কট' },
+            { key: 'simha', bn: 'সিংহ' },
+            { key: 'kanya', bn: 'কন্যা' },
+            { key: 'tula', bn: 'তুলা' },
+            { key: 'vrishchika', bn: 'বৃশ্চিক' },
+            { key: 'dhanu', bn: 'ধনু' },
+            { key: 'makara', bn: 'মকর' },
+            { key: 'kumbha', bn: 'কুম্ভ' },
+            { key: 'meena', bn: 'মীন' }
+        ];
+
+        const RASHI_MAP = Object.fromEntries(RASHIS.map(r => [r.key, r.bn]));
+        let page2Visible = false;
+        let signatureDataUrl = '';
+        let coverPhotoDataUrl = '';
+        let deferredInstallPrompt = null;
+        let coverAutoTimer = null;
+
+        const COVER_PHOTO_STORAGE_KEY = 'yuganta_shastri_cover_photo_v1';
+        const COVER_ROLE_STORAGE_KEY = 'yuganta_shastri_cover_role_v1';
+
+        function showToast(msg) {
+            const toast = document.getElementById('top_toast');
+            if (!toast) return;
+            toast.textContent = msg;
+            toast.classList.remove('hidden');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4500);
+        }
+
+        function setCoverNotice(msg) {
+            const box = document.getElementById('app_notice_box');
+            if (!box) return;
+            if (!msg) {
+                box.classList.add('hidden');
+                box.textContent = '';
+                return;
+            }
+            box.textContent = msg;
+            box.classList.remove('hidden');
+        }
+
+        // Cover / Splash Screen Controls
+        function loadCoverPreferences() {
+            try {
+                const savedPhoto = localStorage.getItem(COVER_PHOTO_STORAGE_KEY);
+                if (savedPhoto) {
+                    coverPhotoDataUrl = savedPhoto;
+                }
+                const savedRole = localStorage.getItem(COVER_ROLE_STORAGE_KEY);
+                const roleInput = document.getElementById('in_cover_role');
+                if (savedRole && roleInput) {
+                    roleInput.value = savedRole;
+                }
+                renderCoverScreen();
+            } catch (err) {
+                console.error('Cover preference load error:', err);
+            }
+        }
+
+        function renderCoverScreen() {
+            const img = document.getElementById('cover_photo_img');
+            const placeholder = document.getElementById('cover_photo_placeholder');
+            if (img && placeholder) {
+                if (coverPhotoDataUrl) {
+                    img.src = coverPhotoDataUrl;
+                    img.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                } else {
+                    img.src = '';
+                    img.classList.add('hidden');
+                    placeholder.classList.remove('hidden');
+                }
+            }
+        }
+
+        function handleCoverPhotoUpload(event) {
+            try {
+                const file = event.target.files && event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    coverPhotoDataUrl = e.target.result;
+                    try {
+                        localStorage.setItem(COVER_PHOTO_STORAGE_KEY, coverPhotoDataUrl);
+                    } catch (storageErr) {
+                        setCoverNotice('ছবি বড় হওয়ায় স্থায়ী সেভে সীমাবদ্ধতা থাকতে পারে, তবে এই সেশনে ছবি দেখা যাবে।');
+                    }
+                    renderCoverScreen();
+                };
+                reader.readAsDataURL(file);
+            } catch (err) {
+                console.error('Cover photo upload error:', err);
+            }
+        }
+
+        function removeCoverPhoto() {
+            coverPhotoDataUrl = '';
+            const fileInput = document.getElementById('in_cover_photo');
+            if (fileInput) fileInput.value = '';
+            try {
+                localStorage.removeItem(COVER_PHOTO_STORAGE_KEY);
+            } catch (err) {
+                console.error('Remove cover photo storage error:', err);
+            }
+            renderCoverScreen();
+        }
+
+        function syncCoverRole() {
+            const roleInput = document.getElementById('in_cover_role');
+            if (!roleInput) return;
+            try {
+                localStorage.setItem(COVER_ROLE_STORAGE_KEY, roleInput.value);
+            } catch (err) {
+                console.error('Role storage error:', err);
+            }
+        }
+
+        function openCoverScreen() {
+            clearTimeout(coverAutoTimer);
+            setCoverNotice('');
+            const splash = document.getElementById('cover_splash');
+            if (splash) splash.classList.remove('hidden');
+        }
+
+        function dismissCoverScreen(manual = false) {
+            clearTimeout(coverAutoTimer);
+            const splash = document.getElementById('cover_splash');
+            if (splash) splash.classList.add('hidden');
+            if (manual) {
+                showToast('যুগান্ত শাস্ত্রী হোরোস্কোপ ও প্রেসক্রিপশন জেনারেটরে স্বাগতম।');
+            }
+        }
+
+        // PWA Dynamic Manifest & Service Worker Setup
+        function initPWA() {
+            try {
+                const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="36" fill="#7c1616"/><rect x="10" y="10" width="172" height="172" rx="28" fill="none" stroke="#f59e0b" stroke-width="4"/><text x="96" y="88" text-anchor="middle" font-size="48" fill="#fde68a" font-family="sans-serif">✦</text><text x="96" y="138" text-anchor="middle" font-size="24" font-weight="bold" fill="#fffbeb" font-family="sans-serif">যুগান্ত শাস্ত্রী</text></svg>`;
+                const iconUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
+
+                const manifest = {
+                    name: 'যুগান্ত শাস্ত্রী — হোরোস্কোপ ও প্রেসক্রিপশন জেনারেটর',
+                    short_name: 'যুগান্ত শাস্ত্রী',
+                    description: 'ইস্ট ইন্ডিয়ান জ্যোতিষ চার্ট, ডিভিশনাল চার্ট, দশা, ফলাদেশ ও প্রতিকার পিডিএফ জেনারেটর',
+                    start_url: './',
+                    display: 'standalone',
+                    background_color: '#fffdf9',
+                    theme_color: '#7c1616',
+                    icons: [
+                        { src: iconUrl, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+                        { src: iconUrl, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+                    ]
+                };
+
+                const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+                const manifestUrl = URL.createObjectURL(manifestBlob);
+                const link = document.createElement('link');
+                link.rel = 'manifest';
+                link.href = manifestUrl;
+                document.head.appendChild(link);
+
+                if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+                    const swCode = `
+                        const CACHE_NAME = 'yuganta-shastri-pwa-v1';
+                        self.addEventListener('install', event => {
+                            self.skipWaiting();
+                        });
+                        self.addEventListener('activate', event => {
+                            event.waitUntil(self.clients.claim());
+                        });
+                        self.addEventListener('fetch', event => {
+                            if (event.request.method !== 'GET') return;
+                            event.respondWith(
+                                caches.match(event.request).then(cached => cached || fetch(event.request).catch(() => cached))
+                            );
+                        });
+                    `;
+                    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+                    const swUrl = URL.createObjectURL(swBlob);
+                    navigator.serviceWorker.register(swUrl).catch(() => {});
+                }
+            } catch (err) {
+                console.error('PWA setup error:', err);
+            }
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            setCoverNotice('অ্যান্ড্রয়েড হোম স্ক্রিনে অ্যাপটি ইনস্টল করার জন্য "অ্যাপ ইনস্টল করুন" বাটনে চাপ দিন।');
+        });
+
+        async function triggerInstallPrompt() {
+            if (deferredInstallPrompt) {
+                try {
+                    deferredInstallPrompt.prompt();
+                    const choice = await deferredInstallPrompt.userChoice;
+                    deferredInstallPrompt = null;
+                    if (choice && choice.outcome === 'accepted') {
+                        setCoverNotice('অ্যাপটি সফলভাবে ইনস্টল হয়েছে!');
+                    }
+                } catch (err) {
+                    setCoverNotice('ব্রাউজার মেনু (⋮) থেকে "Add to Home screen" / "Install app" সিলেক্ট করুন।');
+                }
+            } else {
+                setCoverNotice('অ্যান্ড্রয়েড Chrome-এ ডান দিকের (⋮) মেনু থেকে "Add to Home screen" বা "Install app" নির্বাচন করুন।');
+            }
+        }
+
+        // Share Report / PDF using Web Share API
+        async function shareReportOrPdf() {
+            const clientName = document.getElementById('in_client_name').value.trim() || 'জাতক/জাতিকা';
+            const astroName = document.getElementById('in_astro_name').value.trim() || 'যুগান্ত শাস্ত্রী';
+            const topic = document.getElementById('in_topic').value.trim();
+            const shareTitle = `${astroName} — হোরোস্কোপ রিপোর্ট (${clientName})`;
+            const shareText = `${astroName}\nজাতক/জাতিকা: ${clientName}${topic ? `\nপরামর্শের বিষয়: ${topic}` : ''}`;
+
+            try {
+                if (typeof window.html2pdf === 'function' && navigator.canShare) {
+                    const targetEl = page2Visible
+                        ? document.querySelector('.print-wrapper')
+                        : document.getElementById('page_1');
+                    const fileName = `${clientName.replace(/\s+/g, '_')}_Horoscope.pdf`;
+
+                    const pdfBlob = await window.html2pdf()
+                        .set({
+                            margin: 0,
+                            filename: fileName,
+                            image: { type: 'jpeg', quality: 0.92 },
+                            html2canvas: { scale: 1.5, useCORS: true },
+                            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                        })
+                        .from(targetEl)
+                        .outputPdf('blob');
+
+                    const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+                    if (navigator.canShare({ files: [pdfFile] }) && navigator.share) {
+                        await navigator.share({
+                            title: shareTitle,
+                            text: shareText,
+                            files: [pdfFile]
+                        });
+                        showToast('PDF রিপোর্ট সফলভাবে শেয়ার করা হয়েছে।');
+                        return;
+                    }
+                }
+
+                if (navigator.share) {
+                    await navigator.share({
+                        title: shareTitle,
+                        text: shareText
+                    });
+                    showToast('রিপোর্টের তথ্য শেয়ার করা হয়েছে। পূর্ণাঙ্গ PDF-এর জন্য "প্রিন্ট / PDF সেভ করুন" ব্যবহার করুন।');
+                    return;
+                }
+
+                // Fallback copy to clipboard if Web Share API is unavailable
+                const tempInput = document.createElement('textarea');
+                tempInput.value = `${shareTitle}\n${shareText}`;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                showToast('রিপোর্টের বিবরণ কপি হয়েছে। PDF ডাউনলোডের জন্য "প্রিন্ট / PDF সেভ করুন" চাপুন।');
+            } catch (err) {
+                if (err && err.name === 'AbortError') return;
+                showToast('শেয়ার করতে সমস্যা হলে "প্রিন্ট / PDF সেভ করুন" দিয়ে PDF সেভ করে শেয়ার করুন।');
+            }
+        }
+
+        // Populate 12 rashi input fields for each of the 4 East Indian charts
+        function initChartInputs() {
+            try {
+                ['c1', 'c2', 'c3', 'c4'].forEach(prefix => {
+                    const container = document.getElementById(`${prefix}_inputs_container`);
+                    if (!container) return;
+                    container.innerHTML = RASHIS.map((r, idx) => `
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">${idx + 1}. ${r.bn}</label>
+                            <input type="text" id="${prefix}_${r.key}" oninput="renderAll()" placeholder="গ্রহ/তথ্য..."
+                                class="w-full px-2 py-1 text-xs rounded border border-slate-300 focus:ring-1 focus:ring-red-800 outline-none bg-white">
+                        </div>
+                    `).join('');
+                });
+            } catch (err) {
+                console.error('Chart input initialization error:', err);
+            }
+        }
+
+        // Apply selected Divisional / Special Chart preset to chart title while keeping manual editing possible
+        function applyChartPreset(prefix, selectedValue) {
+            if (!selectedValue) return;
+            const titleInput = document.getElementById(`${prefix}_title`);
+            if (titleInput) {
+                titleInput.value = selectedValue;
+                renderAll();
+            }
+        }
+
+        // Switch active sidebar editor tab
+        function switchTab(tabNum) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('border-red-800', 'bg-white', 'text-red-900');
+                b.classList.add('border-transparent');
+            });
+
+            const panel = document.getElementById(`tab_panel_${tabNum}`);
+            const btn = document.getElementById(`tab_btn_${tabNum}`);
+            if (panel) panel.classList.remove('hidden');
+            if (btn) {
+                btn.classList.remove('border-transparent');
+                btn.classList.add('border-red-800', 'bg-white', 'text-red-900');
+            }
+        }
+
+        // Auto-expand textarea vertically so content is never clipped
+        function autoExpandTextarea(el, minPx = 0) {
+            if (!el) return;
+            el.style.height = 'auto';
+            const targetHeight = Math.max(el.scrollHeight, minPx);
+            el.style.height = `${targetHeight}px`;
+        }
+
+        function syncInline(inputId, text) {
+            const el = document.getElementById(inputId);
+            if (el) el.value = text.trim();
+            renderDates();
+        }
+
+        function syncHeaderInline(inputId, text) {
+            const el = document.getElementById(inputId);
+            if (el) el.value = text;
+            renderHeader();
+        }
+
+        function syncFooterInline(inputId, text) {
+            const el = document.getElementById(inputId);
+            if (el) el.value = text;
+            renderFooter();
+        }
+
+        function syncFromSidebarTopic() {
+            const area = document.getElementById('sheet_topic_area');
+            area.value = document.getElementById('in_topic').value;
+            autoExpandTextarea(area, 22);
+        }
+
+        function syncFromSheetTopic(el) {
+            document.getElementById('in_topic').value = el.value;
+            autoExpandTextarea(el, 22);
+        }
+
+        function syncFromSidebarP1() {
+            const area = document.getElementById('sheet_pred_remedy_p1');
+            area.value = document.getElementById('in_pred_remedy_p1').value;
+            autoExpandTextarea(area, 315);
+        }
+
+        function syncFromSheetP1(el) {
+            document.getElementById('in_pred_remedy_p1').value = el.value;
+            autoExpandTextarea(el, 315);
+        }
+
+        function syncFromSidebarP2() {
+            const area = document.getElementById('sheet_pred_remedy_p2');
+            area.value = document.getElementById('in_pred_remedy_p2').value;
+            autoExpandTextarea(area, 560);
+        }
+
+        function syncFromSheetP2(el) {
+            document.getElementById('in_pred_remedy_p2').value = el.value;
+            autoExpandTextarea(el, 560);
+        }
+
+        // Toggle optional 2nd page (Header + ফলাদেশ ও প্রতিকার box only, no horoscope charts)
+        function togglePage2() {
+            page2Visible = !page2Visible;
+            const p2 = document.getElementById('page_2');
+            const sb2 = document.getElementById('sidebar_p2_box');
+            const btn = document.getElementById('btn_toggle_page2');
+
+            if (page2Visible) {
+                p2.classList.remove('hidden');
+                sb2.classList.remove('hidden');
+                btn.textContent = '✓ ২য় পেজ যুক্ত আছে (বাদ দিন)';
+                autoExpandTextarea(document.getElementById('sheet_pred_remedy_p2'), 560);
+            } else {
+                p2.classList.add('hidden');
+                sb2.classList.add('hidden');
+                btn.textContent = '+ ২য় পেজ যুক্ত করুন';
+            }
+        }
+
+        // Digital signature upload handler
+        function handleSignatureUpload(event) {
+            try {
+                const file = event.target.files && event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    signatureDataUrl = e.target.result;
+                    renderSignature();
+                };
+                reader.readAsDataURL(file);
+            } catch (err) {
+                console.error('Signature upload error:', err);
+            }
+        }
+
+        function removeSignature() {
+            signatureDataUrl = '';
+            const fileInput = document.getElementById('in_sig_file');
+            if (fileInput) fileInput.value = '';
+            renderSignature();
+        }
+
+        function renderSignature() {
+            ['out_sig_img_p1', 'out_sig_img_p2'].forEach(id => {
+                const img = document.getElementById(id);
+                if (!img) return;
+                if (signatureDataUrl) {
+                    img.src = signatureDataUrl;
+                    img.classList.remove('hidden');
+                } else {
+                    img.src = '';
+                    img.classList.add('hidden');
+                }
+            });
+        }
+
+        function escapeXml(str) {
+            if (!str) return '';
+            return str.replace(/[<>&'"]/g, c => ({
+                '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;'
+            }[c]));
+        }
+
+        /**
+         * Generates an East Indian (Bengali square) Horoscope SVG chart.
+         * Counter-clockwise house order starting from Mesha (top-center).
+         */
+        function buildEastIndianSVG(title, lagnaKey, valuesMap, isMain = false) {
+            const size = 300;
+            const c1 = 100;
+            const c2 = 200;
+
+            function wrapLines(text, maxChars) {
+                if (!text || !text.trim()) return [];
+                const tokens = text.trim().split(/[\s,]+/).filter(Boolean);
+                const lines = [];
+                let line = '';
+                for (let t of tokens) {
+                    if ((line + ' ' + t).trim().length <= maxChars) {
+                        line = (line + ' ' + t).trim();
+                    } else {
+                        if (line) lines.push(line);
+                        line = t;
+                    }
+                }
+                if (line) lines.push(line);
+                return lines.slice(0, 3);
+            }
+
+            const houses = {
+                mesha:      { lx: 150, ly: 15,  anchor: 'middle', cx: 150, cy: 52,  max: 11 },
+                vrisha:     { lx: 94,  ly: 14,  anchor: 'end',    cx: 68,  cy: 39,  max: 7  },
+                mithuna:    { lx: 6,   ly: 94,  anchor: 'start',  cx: 34,  cy: 71,  max: 7  },
+                karkata:    { lx: 6,   ly: 115, anchor: 'start',  cx: 50,  cy: 150, max: 11 },
+                simha:      { lx: 6,   ly: 213, anchor: 'start',  cx: 34,  cy: 235, max: 7  },
+                kanya:      { lx: 94,  ly: 292, anchor: 'end',    cx: 68,  cy: 266, max: 7  },
+                tula:       { lx: 150, ly: 292, anchor: 'middle', cx: 150, cy: 251, max: 11 },
+                vrishchika: { lx: 206, ly: 292, anchor: 'start',  cx: 232, cy: 266, max: 7  },
+                dhanu:      { lx: 294, ly: 213, anchor: 'end',    cx: 266, cy: 235, max: 7  },
+                makara:     { lx: 294, ly: 115, anchor: 'end',    cx: 250, cy: 150, max: 11 },
+                kumbha:     { lx: 294, ly: 94,  anchor: 'end',    cx: 266, cy: 71,  max: 7  },
+                meena:      { lx: 206, ly: 14,  anchor: 'start',  cx: 232, cy: 39,  max: 7  }
+            };
+
+            const rashiFontSize = isMain ? 10.5 : 12;
+            const planetFontSize = isMain ? 12.5 : 14.5;
+            const lagnaMarkerSize = isMain ? 12 : 13.5;
+            const lineHeight = isMain ? 14.5 : 17;
+
+            let innerContent = '';
+
+            for (const [key, pos] of Object.entries(houses)) {
+                const isLagna = (lagnaKey === key);
+                const rLabel = RASHI_MAP[key];
+                const lines = wrapLines(valuesMap[key] || '', pos.max);
+
+                innerContent += `
+                    <text x="${pos.lx}" y="${pos.ly}" text-anchor="${pos.anchor}"
+                          font-size="${rashiFontSize}" font-weight="${isLagna ? '700' : '600'}"
+                          fill="${isLagna ? '#991b1b' : '#57534e'}">
+                        ${rLabel}
+                    </text>
+                `;
+
+                const items = [];
+                if (isLagna) items.push({ txt: '★লগ্ন★', lagna: true });
+                lines.forEach(l => items.push({ txt: l, lagna: false }));
+
+                const totalH = items.length * lineHeight;
+                const startY = pos.cy - (totalH / 2) + (lineHeight * 0.72);
+
+                items.forEach((it, i) => {
+                    const y = startY + i * lineHeight;
+                    innerContent += `
+                        <text x="${pos.cx}" y="${y}" text-anchor="middle"
+                              font-size="${it.lagna ? lagnaMarkerSize : planetFontSize}"
+                              font-weight="700"
+                              fill="${it.lagna ? '#991b1b' : '#0f172a'}">
+                            ${escapeXml(it.txt)}
+                        </text>
+                    `;
+                });
+            }
+
+            const lagnaText = lagnaKey ? `${RASHI_MAP[lagnaKey]} লগ্ন` : '';
+            const centerTitleSize = isMain ? 15 : 17.5;
+            const centerLagnaSize = isMain ? 12 : 14;
+
+            return `
+                <svg viewBox="0 0 ${size} ${size}" class="w-full h-full select-none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="1.5" y="1.5" width="${size - 3}" height="${size - 3}" fill="#fffdf9" stroke="#7f1d1d" stroke-width="${isMain ? '2.2' : '2.6'}"/>
+                    <line x1="${c1}" y1="1.5" x2="${c1}" y2="${size - 1.5}" stroke="#7f1d1d" stroke-width="${isMain ? '1.5' : '1.9'}"/>
+                    <line x1="${c2}" y1="1.5" x2="${c2}" y2="${size - 1.5}" stroke="#7f1d1d" stroke-width="${isMain ? '1.5' : '1.9'}"/>
+                    <line x1="1.5" y1="${c1}" x2="${size - 1.5}" y2="${c1}" stroke="#7f1d1d" stroke-width="${isMain ? '1.5' : '1.9'}"/>
+                    <line x1="1.5" y1="${c2}" x2="${size - 1.5}" y2="${c2}" stroke="#7f1d1d" stroke-width="${isMain ? '1.5' : '1.9'}"/>
+
+                    <line x1="1.5" y1="1.5" x2="${c1}" y2="${c1}" stroke="#7f1d1d" stroke-width="${isMain ? '1.4' : '1.7'}"/>
+                    <line x1="${size - 1.5}" y1="1.5" x2="${c2}" y2="${c1}" stroke="#7f1d1d" stroke-width="${isMain ? '1.4' : '1.7'}"/>
+                    <line x1="1.5" y1="${size - 1.5}" x2="${c1}" y2="${c2}" stroke="#7f1d1d" stroke-width="${isMain ? '1.4' : '1.7'}"/>
+                    <line x1="${size - 1.5}" y1="${size - 1.5}" x2="${c2}" y2="${c2}" stroke="#7f1d1d" stroke-width="${isMain ? '1.4' : '1.7'}"/>
+
+                    <rect x="${c1 + 3}" y="${c1 + 3}" width="${c1 - 6}" height="${c1 - 6}" fill="#fcf5e5" stroke="#d4af37" stroke-width="0.9"/>
+                    <text x="150" y="${lagnaText ? 143 : 155}" text-anchor="middle"
+                          font-size="${centerTitleSize}" font-weight="700" fill="#7f1d1d" font-family="'Noto Serif Bengali', serif">
+                        ${escapeXml(title || 'চার্ট')}
+                    </text>
+                    ${lagnaText ? `
+                    <text x="150" y="164" text-anchor="middle"
+                          font-size="${centerLagnaSize}" font-weight="700" fill="#991b1b">
+                        ${escapeXml(lagnaText)}
+                    </text>` : ''}
+
+                    ${innerContent}
+                </svg>
+            `;
+        }
+
+        function getChartValues(prefix) {
+            const vals = {};
+            RASHIS.forEach(r => {
+                vals[r.key] = document.getElementById(`${prefix}_${r.key}`).value;
+            });
+            return vals;
+        }
+
+        function renderHeaderSizes() {
+            const nameSize = document.getElementById('fs_astro_name').value;
+            const titleSize = document.getElementById('fs_astro_title').value;
+            const contactSize = document.getElementById('fs_astro_contact').value;
+            const footerSize = document.getElementById('fs_footer_note').value;
+
+            document.getElementById('lbl_size_name').textContent = `${nameSize}px`;
+            document.getElementById('lbl_size_title').textContent = `${titleSize}px`;
+            document.getElementById('lbl_size_contact').textContent = `${contactSize}px`;
+            document.getElementById('lbl_size_footer').textContent = `${footerSize}px`;
+
+            ['out_astro_name_p1', 'out_astro_name_p2'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.fontSize = `${nameSize}px`;
+            });
+            ['out_astro_title_p1', 'out_astro_title_p2'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.fontSize = `${titleSize}px`;
+            });
+            ['out_astro_contact_p1', 'out_astro_contact_p2'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.fontSize = `${contactSize}px`;
+            });
+            ['out_footer_note_p1', 'out_footer_note_p2'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.fontSize = `${footerSize}px`;
+            });
+        }
+
+        function renderHeader() {
+            const nameVal = document.getElementById('in_astro_name').value;
+            const titleVal = document.getElementById('in_astro_title').value;
+            const contactVal = document.getElementById('in_astro_contact').value;
+
+            ['out_astro_name_p1', 'out_astro_name_p2'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && document.activeElement !== el) el.textContent = nameVal;
+            });
+            ['out_astro_title_p1', 'out_astro_title_p2'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && document.activeElement !== el) el.textContent = titleVal;
+            });
+            ['out_astro_contact_p1', 'out_astro_contact_p2'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && document.activeElement !== el) el.textContent = contactVal;
+            });
+            renderHeaderSizes();
+        }
+
+        function renderDates() {
+            const dVal = document.getElementById('in_consult_date').value;
+            ['out_consult_date_p1', 'out_consult_date_p2'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && document.activeElement !== el) el.textContent = dVal;
+            });
+        }
+
+        function renderFooter() {
+            const fNote = document.getElementById('in_footer_note').value;
+            const sLabel = document.getElementById('in_sig_label').value;
+
+            ['out_footer_note_p1', 'out_footer_note_p2'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && document.activeElement !== el) el.textContent = fNote;
+            });
+            ['out_sig_label_p1', 'out_sig_label_p2'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && document.activeElement !== el) el.textContent = sLabel;
+            });
+        }
+
+        function renderAll() {
+            try {
+                renderHeader();
+                renderDates();
+                renderFooter();
+                renderSignature();
+
+                const clientMap = [
+                    ['out_client_name', 'in_client_name'],
+                    ['out_dob', 'in_dob'],
+                    ['out_tob', 'in_tob'],
+                    ['out_pob', 'in_pob'],
+                    ['out_rashi', 'in_rashi'],
+                    ['out_nakshatra', 'in_nakshatra'],
+                    ['out_gana', 'in_gana'],
+                    ['out_dasha', 'in_dasha'],
+                    ['out_antardasha', 'in_antardasha'],
+                    ['out_next_antardasha', 'in_next_antardasha'],
+                    ['out_next_dasha', 'in_next_dasha']
+                ];
+
+                clientMap.forEach(([outId, inId]) => {
+                    const outEl = document.getElementById(outId);
+                    const inEl = document.getElementById(inId);
+                    if (outEl && inEl && document.activeElement !== outEl) {
+                        outEl.textContent = inEl.value;
+                    }
+                });
+
+                const c1Lagna = document.getElementById('c1_lagna').value;
+                document.getElementById('out_lagna').textContent = c1Lagna ? RASHI_MAP[c1Lagna] : '';
+
+                document.getElementById('svg_chart_1').innerHTML = buildEastIndianSVG(
+                    document.getElementById('c1_title').value,
+                    c1Lagna,
+                    getChartValues('c1'),
+                    true
+                );
+
+                document.getElementById('svg_chart_2').innerHTML = buildEastIndianSVG(
+                    document.getElementById('c2_title').value,
+                    document.getElementById('c2_lagna').value,
+                    getChartValues('c2'),
+                    false
+                );
+
+                document.getElementById('svg_chart_3').innerHTML = buildEastIndianSVG(
+                    document.getElementById('c3_title').value,
+                    document.getElementById('c3_lagna').value,
+                    getChartValues('c3'),
+                    false
+                );
+
+                document.getElementById('svg_chart_4').innerHTML = buildEastIndianSVG(
+                    document.getElementById('c4_title').value,
+                    document.getElementById('c4_lagna').value,
+                    getChartValues('c4'),
+                    false
+                );
+
+                const sheetTopic = document.getElementById('sheet_topic_area');
+                if (document.activeElement !== sheetTopic) {
+                    sheetTopic.value = document.getElementById('in_topic').value;
+                }
+                autoExpandTextarea(sheetTopic, 22);
+
+                const sheetP1 = document.getElementById('sheet_pred_remedy_p1');
+                if (document.activeElement !== sheetP1) {
+                    sheetP1.value = document.getElementById('in_pred_remedy_p1').value;
+                }
+                autoExpandTextarea(sheetP1, 315);
+
+                const sheetP2 = document.getElementById('sheet_pred_remedy_p2');
+                if (document.activeElement !== sheetP2) {
+                    sheetP2.value = document.getElementById('in_pred_remedy_p2').value;
+                }
+                if (page2Visible) {
+                    autoExpandTextarea(sheetP2, 560);
+                }
+            } catch (err) {
+                console.error('Render error:', err);
+            }
+        }
+
+        function clearAllData() {
+            ['in_client_name', 'in_dob', 'in_tob', 'in_pob', 'in_rashi', 'in_nakshatra', 'in_gana',
+             'in_dasha', 'in_antardasha', 'in_next_antardasha', 'in_next_dasha',
+             'in_topic', 'in_pred_remedy_p1', 'in_pred_remedy_p2'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            ['c1_lagna', 'c2_lagna', 'c3_lagna', 'c4_lagna'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            ['c2_preset', 'c3_preset', 'c4_preset'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            ['c1', 'c2', 'c3', 'c4'].forEach(prefix => {
+                RASHIS.forEach(r => {
+                    document.getElementById(`${prefix}_${r.key}`).value = '';
+                });
+            });
+            removeSignature();
+            renderAll();
+        }
+
+        function fillSampleData() {
+            clearAllData();
+
+            document.getElementById('in_client_name').value = 'শ্রী অনির্বাণ মুখোপাধ্যায়';
+            document.getElementById('in_dob').value = '১৮/০৪/১৯৯৪';
+            document.getElementById('in_tob').value = 'সকাল ০৭:৪০';
+            document.getElementById('in_pob').value = 'কলকাতা';
+            document.getElementById('in_rashi').value = 'কর্কট';
+            document.getElementById('in_nakshatra').value = 'অশ্লেষা (২য় পদ)';
+            document.getElementById('in_gana').value = 'রাক্ষস গণ';
+
+            document.getElementById('c1_title').value = 'মূল রাশিচক্র';
+            document.getElementById('c1_lagna').value = 'vrisha';
+            document.getElementById('c1_mesha').value = 'রবি, বুধ';
+            document.getElementById('c1_vrisha').value = 'কেতু';
+            document.getElementById('c1_karkata').value = 'চন্দ্র';
+            document.getElementById('c1_tula').value = 'বৃহঃ';
+            document.getElementById('c1_vrishchika').value = 'রাহু';
+            document.getElementById('c1_kumbha').value = 'শনি';
+            document.getElementById('c1_meena').value = 'মঙ্গল, শুক্র';
+
+            document.getElementById('c2_title').value = 'নবাংশ';
+            document.getElementById('c2_lagna').value = 'simha';
+            document.getElementById('c2_mesha').value = 'বৃহঃ';
+            document.getElementById('c2_mithuna').value = 'রাহু';
+            document.getElementById('c2_simha').value = 'রবি';
+            document.getElementById('c2_tula').value = 'শুক্র, শনি';
+            document.getElementById('c2_dhanu').value = 'কেতু';
+            document.getElementById('c2_makara').value = 'চন্দ্র, বুধ';
+            document.getElementById('c2_meena').value = 'মঙ্গল';
+
+            document.getElementById('c3_title').value = 'গোচর';
+            document.getElementById('c3_mithuna').value = 'বৃহঃ';
+            document.getElementById('c3_karkata').value = 'চন্দ্র';
+            document.getElementById('c3_simha').value = 'কেতু';
+            document.getElementById('c3_kumbha').value = 'রাহু';
+            document.getElementById('c3_meena').value = 'শনি';
+
+            document.getElementById('c4_title').value = 'ভাব চলিত';
+            document.getElementById('c4_lagna').value = 'vrisha';
+            document.getElementById('c4_mesha').value = 'রবি, বুধ';
+            document.getElementById('c4_karkata').value = 'চন্দ্র';
+            document.getElementById('c4_tula').value = 'বৃহঃ';
+            document.getElementById('c4_kumbha').value = 'শনি';
+            document.getElementById('c4_meena').value = 'মঙ্গল, শুক্র';
+
+            document.getElementById('in_dasha').value = 'বুধ (২০১৮-২০৩৫)';
+            document.getElementById('in_antardasha').value = 'শুক্র (২০২৫-২০২৮)';
+            document.getElementById('in_next_antardasha').value = 'সূর্য (২০২৮-২০২৯)';
+            document.getElementById('in_next_dasha').value = 'কেতু (২০৩৫-২০৪২)';
+
+            document.getElementById('in_topic').value = 'কর্মজীবন, ব্যবসা সম্প্রসারণ, আর্থিক উন্নতি ও পারিবারিক শান্তি';
+
+            document.getElementById('in_pred_remedy_p1').value =
+`【 ফলাদেশ 】
+১. কর্ম ও অর্থভাগ্য: বৃষ লগ্নের একাদশ ভাবে লগ্নাধিপতি শুক্র ও মঙ্গলের অবস্থানের ফলে কর্মক্ষেত্রে উন্নতি ও আয়ের নতুন পথ খুলবে। বর্তমানে বুধ মহাদশায় শুক্রের অন্তর্দশা চলায় ব্যবসা, বুদ্ধিবৃত্তিক কাজ ও সৃজনশীল ক্ষেত্রে সাফল্য আসবে।
+২. পারিবারিক ও স্বাস্থ্য: তৃতীয় ভাবে চন্দ্রের অবস্থানের কারণে মানসিক সংবেদনশীলতা ও পরিশ্রম বাড়বে। গোচরের প্রভাবে স্বাস্থ্য ও বিশ্রামের দিকে খেয়াল রাখা প্রয়োজন।
+
+【 প্রতিকার 】
+• রত্ন/মূল: ডান হাতের কনিষ্ঠায় শুদ্ধ পান্না (৪.৫ রতি) বুধবার সকালে বা শ্বেত বেরেলা মূল ধারণ করতে পারেন।
+• দৈনন্দিন করণীয়: প্রতি বুধবার গণেশ বন্দনা ও শনিবার সন্ধ্যায় অশ্বত্থ বৃক্ষের নিচে প্রদীপ প্রজ্বলন শুভ।`;
+
+            document.getElementById('in_pred_remedy_p2').value =
+`【 বিস্তারিত ফলাদেশ ও প্রতিকার (অতিরিক্ত অংশ) 】
+• পরবর্তী অন্তর্দশা ও দশা: শুক্র অন্তর্দশার পর সূর্য অন্তর্দশায় প্রশাসনিক ও দায়িত্বশীল কাজে অগ্রগতি হতে পারে। পরবর্তীতে কেতু মহাদশায় আধ্যাত্মিক ও গবেষণামূলক বিষয়ে ঝোঁক বাড়বে।
+• সামগ্রিক পরামর্শ: বড় সিদ্ধান্ত বা বিনিয়োগের আগে বাস্তবিক দিক ও সময়সূচি বিবেচনা করে এগোলে শুভ ফল পাওয়া যাবে।`;
+
+            renderAll();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initPWA();
+            loadCoverPreferences();
+            initChartInputs();
+            const now = new Date();
+            const d = String(now.getDate()).padStart(2, '0');
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const y = now.getFullYear();
+            document.getElementById('in_consult_date').value = `${d}/${m}/${y}`;
+            fillSampleData();
+
+            // Auto-dismiss splash after 4.5s unless user is interacting with cover inputs
+            coverAutoTimer = setTimeout(() => {
+                const splash = document.getElementById('cover_splash');
+                if (splash && !splash.classList.contains('hidden') && !splash.contains(document.activeElement)) {
+                    dismissCoverScreen(false);
+                }
+            }, 4500);
+        });
+    </script>
+</body>
+</html>
+```
